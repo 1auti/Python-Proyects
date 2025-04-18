@@ -1,0 +1,71 @@
+{
+    "libros": [
+        {
+            "codigo": "L001",
+            "titulo": "Cien a\u00f1os de soledad",
+            "autor": "Gabriel Garc\u00eda M\u00e1rquez",
+            "categoria": "Novela",
+            "a\u00f1o_publicacion": 1967,
+            "estado": "disponible"
+        },
+        {
+            "codigo": "L002",
+            "titulo": "El principito",
+            "autor": "Antoine de Saint-Exup\u00e9ry",
+            "categoria": "Infantil",
+            "a\u00f1o_publicacion": 1943,
+            "estado": "prestado"
+        },
+        {
+            "codigo": "L003",
+            "titulo": "Python para todos",
+            "autor": "Charles Severance",
+            "categoria": "Inform\u00e1tica",
+            "a\u00f1o_publicacion": 2016,
+            "estado": "disponible"
+        }
+    ],
+    "usuarios": [
+        {
+            "id_usuario": "U001",
+            "nombre": "Juan P\u00e9rez",
+            "email": "juan@ejemplo.com",
+            "fecha_registro": "2025-04-14T11:48:42.832554",
+            "prestamos_activos": [],
+            "historial_prestamos": [
+                "P0001"
+            ]
+        },
+        {
+            "id_usuario": "U002",
+            "nombre": "Mar\u00eda L\u00f3pez",
+            "email": "maria@ejemplo.com",
+            "fecha_registro": "2025-04-14T11:48:42.832579",
+            "prestamos_activos": [
+                "P0002"
+            ],
+            "historial_prestamos": []
+        }
+    ],
+    "prestamos": [
+        {
+            "id_prestamo": "P0001",
+            "codigo_libro": "L001",
+            "id_usuario": "U001",
+            "fecha_prestamo": "2025-04-14T11:48:42.832589",
+            "fecha_devolucion_esperada": "2025-04-28T11:48:42.832589",
+            "fecha_devolucion_real": "2025-04-14T11:48:42.832686",
+            "multa": 0.0
+        },
+        {
+            "id_prestamo": "P0002",
+            "codigo_libro": "L002",
+            "id_usuario": "U002",
+            "fecha_prestamo": "2025-04-14T11:48:42.832603",
+            "fecha_devolucion_esperada": "2025-04-28T11:48:42.832603",
+            "fecha_devolucion_real": null,
+            "multa": 0.0
+        }
+    ],
+    "contador_prestamos": 3
+}

@@ -1,0 +1,11 @@
+fecha,producto,categoria,cantidad,precio
+2023-01-15,Laptop HP,Electrónica,2,899.99
+2023-01-20,Mouse Logitech,Accesorios,5,29.99
+2023-02-05,Teclado Mecánico,Accesorios,3,89.99
+2023-02-10,"Monitor 27""",Electrónica,2,249.99
+2023-03-01,Laptop Dell,Electrónica,1,1299.99
+2023-03-15,Audífonos Sony,Audio,4,79.99
+2023-04-02,Smartphone Samsung,Móviles,3,699.99
+2023-04-20,Tablet iPad,Electrónica,2,499.99
+2023-05-10,Cámara Canon,Fotografía,1,649.99
+2023-05-25,Impresora HP,Oficina,2,199.99

@@ -1,0 +1,11 @@
+[2023-04-15 08:30:45] [INFO] Server starting
+[2023-04-15 08:31:02] [INFO] Database connection established
+[2023-04-15 08:32:15] [WARNING] High memory usage detected (85%)
+[2023-04-15 09:15:32] [ERROR] Database query timeout
+[2023-04-15 09:16:04] [ERROR] Database query timeout
+[2023-04-15 10:45:22] [INFO] User login: admin
+[2023-04-15 11:23:18] [ERROR] File not found: config.json
+[2023-04-15 12:01:43] [WARNING] CPU usage above threshold (75%)
+[2023-04-15 14:22:56] [INFO] Scheduled backup started
+[2023-04-15 14:30:12] [INFO] Backup completed successfully
+[2023-04-15 15:45:30] [ERROR] Database query timeout
