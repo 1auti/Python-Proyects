@@ -1,0 +1,27 @@
+{
+    "correo": {
+        "smtp_servidor": "smtp.gmail.com",
+        "smtp_puerto": 587,
+        "correo": "lautacenizo@gmail.com",
+        "contrase\u00f1a": "Lautacenizo2003"
+    },
+    "clima": {
+        "api_key": "",
+        "ciudad_predeterminada": "Madrid"
+    },
+    "aplicaciones": {
+        "navegador": "chrome",
+        "editor": "notepad",
+        "musica": "spotify",
+        "idea":"idea",
+        "python": "python"
+    },
+    "casa_inteligente": {
+        "api_url": "",
+        "token": "",
+        "dispositivos": {
+            "luz_sala": "id1234",
+            "luz_cocina": "id5678"
+        }
+    }
+}
