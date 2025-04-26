@@ -1,5 +1,6 @@
 """
- Crea un asistente personal que reconozca comandos de voz, ejecute tareas en tu computadora y pueda controlar elementos de tu hogar inteligente.
+ Asistente personal mejorado que reconoce comandos de voz, ejecuta tareas en tu computadora,
+ y vuelve automáticamente al modo de escucha después de cada comando.
 """
 
 import speech_recognition as sr # Reconoce voz desde el micrófono.
@@ -20,6 +21,8 @@ from email.mime.multipart import MIMEMultipart
 class AsistenteVirtual:
     def __init__(self, nombre="Ana"):
         self.nombre = nombre
+        self.activo = False
+        self.palabra_activacion = f"hola {self.nombre.lower()}"
         self.inicializar_voz()
         self.comandos = {
             "hora": self.dar_hora,
@@ -27,12 +30,12 @@ class AsistenteVirtual:
             "buscar": self.buscar_web,
             "abrir": self.abrir_aplicacion,
             "correo": self.enviar_correo,
-            "clima": self.obtener_clima,
+            # "clima": self.obtener_clima,
             "captura": self.tomar_captura,
             "recordatorio": self.crear_recordatorio,
             "apagar": self.apagar_computadora,
-            "chiste": self.contar_chiste,
-            "luz": self.controlar_luz,
+            # "chiste": self.contar_chiste,
+            # "luz": self.controlar_luz,
             "música": self.reproducir_musica
         }
         self.config = self.cargar_configuracion()
@@ -112,12 +115,81 @@ class AsistenteVirtual:
 
     def procesar_comando(self, texto):
         """Procesa el comando de voz y ejecuta la acción correspondiente."""
+        comando_ejecutado = False
+
         for palabra_clave, funcion in self.comandos.items():
             if palabra_clave in texto:
-                return funcion(texto)
+                resultado = funcion(texto)
+                comando_ejecutado = resultado
+                break
 
-        self.hablar("No entendí ese comando. ¿Puedes repetirlo?")
-        return False
+        if not comando_ejecutado:
+            self.hablar("No entendí ese comando. ¿Puedes repetirlo?")
+        else:
+            # Después de ejecutar cualquier comando con éxito,
+            # informar al usuario que debe volver a activar al asistente si lo necesita
+            self.hablar("Si necesitas algo más, vuelve a decir 'Hola Ana'.")
+
+        # Desactivar el asistente para que vuelva al modo de escucha de palabra de activación
+        self.activo = False
+        return comando_ejecutado
+
+    def escuchar_activacion(self):
+        """Escucha activamente hasta detectar la palabra de activacion"""
+        reconocedor = sr.Recognizer()
+        reconocedor.energy_threshold = 300 # Ajustamos la capacidad por el ruido ambiental
+
+        print(f"Esperando palabra de activacion: '{self.palabra_activacion}'...")
+
+        while True:
+            try:
+                with sr.Microphone() as fuente:
+                    reconocedor.adjust_for_ambient_noise(fuente, duration=0.5)
+                    audio = reconocedor.listen(fuente, phrase_time_limit=3)
+
+                texto = reconocedor.recognize_google(audio, language="es-ES").lower()
+                print(f"Detectado: {texto}")
+
+                if self.palabra_activacion in texto:
+                    print("¡Palabra de activación detectada!")
+                    self.hablar(f"Hola, soy {self.nombre}. ¿En qué puedo ayudarte?")
+                    return True
+
+            except sr.UnknownValueError:
+                # No se detectó voz clara, seguir escuchando
+                pass
+            except sr.RequestError:
+                print("Error de conexión al servicio de reconocimiento")
+                time.sleep(5)  # Esperar antes de reintentar
+            except Exception as e:
+                print(f"Error: {str(e)}")
+                time.sleep(2)
+
+    def ejecutar_en_segundo_plano(self):
+        """Ejecuta el asistente en modo de escucha continua."""
+        self.inicializar_voz()
+        print(f"Asistente {self.nombre} iniciado en modo de escucha continua")
+
+        while True:
+            if self.escuchar_activacion():
+                # Entrar en modo conversación
+                self.activo = True
+
+                while self.activo:
+                    texto = self.escuchar()
+
+                    if texto == "no_entendido":
+                        self.hablar("No te entendí. ¿Puedes repetirlo?")
+                    elif texto == "error":
+                        continue
+                    elif any(palabra in texto for palabra in ["adiós", "adios", "chao", "hasta luego"]):
+                        self.hablar("Hasta luego, estaré aquí si me necesitas.")
+                        self.activo = False
+                    else:
+                        self.procesar_comando(texto)
+                        # No es necesario un temporizador por inactividad ya que
+                        # ahora el asistente vuelve automáticamente al modo de escucha
+
 
     # Funciones de comandos
     def dar_hora(self, texto):
@@ -341,65 +413,6 @@ class AsistenteVirtual:
             self.hablar("Operación cancelada")
             return False
 
-    def contar_chiste(self, texto):
-        """Cuenta un chiste aleatorio."""
-        chistes = [
-            "¿Por qué los programadores prefieren el frío? Porque odian los bugs.",
-            "¿Cuántos programadores hacen falta para cambiar una bombilla? Ninguno, es un problema de hardware.",
-            "Un informático va al supermercado y su esposa le dice: 'Compra una barra de pan, y si hay huevos, trae seis'. El informático vuelve con 6 barras de pan: 'Es que había huevos'.",
-            "¿Qué le dice un bit al otro? Nos vemos en el bus.",
-            "¿Por qué Python no usa gafas? Porque tiene Numpy."
-        ]
-
-        chiste = random.choice(chistes)
-        self.hablar(chiste)
-        return True
-
-    def controlar_luz(self, texto):
-        """Controla luces inteligentes (simulación o integración real)."""
-        if not self.config["casa_inteligente"]["api_url"]:
-            self.hablar("Esta es una simulación. En un entorno real, se conectaría a tu sistema de domótica")
-
-            # Extraer habitación y acción
-            habitacion = "sala"
-            accion = "encender"
-
-            if "cocina" in texto:
-                habitacion = "cocina"
-            elif "dormitorio" in texto:
-                habitacion = "dormitorio"
-
-            if "apagar" in texto:
-                accion = "apagar"
-
-            self.hablar(f"Simulando: {accion} luz de {habitacion}")
-            return True
-
-        # En caso de tener configuración real
-        try:
-            # Identificar qué luz
-            id_dispositivo = None
-            for nombre, id_dev in self.config["casa_inteligente"]["dispositivos"].items():
-                if nombre.lower() in texto:
-                    id_dispositivo = id_dev
-                    break
-
-            if not id_dispositivo:
-                self.hablar("No reconozco esa luz")
-                return False
-
-            # Identificar acción
-            estado = "on" if "encender" in texto or "encender" in texto else "off"
-
-            # Llamar a la API (simulado)
-            self.hablar(f"Enviando comando {estado} al dispositivo {id_dispositivo}")
-            # En implementación real: requests.post(url, json=payload, headers=headers)
-
-            return True
-        except Exception as e:
-            self.hablar(f"Error al controlar la luz: {str(e)}")
-            return False
-
     def reproducir_musica(self, texto):
         """Reproduce música (simulación o integración real)."""
         if "spotify" in self.config["aplicaciones"]["musica"]:
@@ -453,4 +466,4 @@ class AsistenteVirtual:
 
 if __name__ == "__main__":
     asistente = AsistenteVirtual("Ana")
-    asistente.ejecutar()
+    asistente.ejecutar_en_segundo_plano()
